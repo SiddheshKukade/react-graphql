@@ -4,12 +4,13 @@ const express = require("express");
 const { graphqlHTTP } = require("express-graphql");
 const schema = require("./schema/schema");
 const mongoose = require("mongoose");
-
+const Book = require("./models/book");
+const Author = require("./models/author");
 const app = express();
 mongoose.connect(`${process.env.MONGO}`);
 mongoose.connection.once("open", () => console.log("Mongo Atlas Connected"));
 app.use("/graphql", graphqlHTTP({ schema, graphiql: true }));
 
 app.listen(4000, () => {
-  console.log("yo  lo  ");
+  console.log("yo   lo  ");
 });

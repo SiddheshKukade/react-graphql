@@ -1,6 +1,6 @@
 const graphql = require("graphql");
 const _ = require("lodash");
-
+const Author = require("../models/author");
 const {
   GraphQLObjectType,
   GraphQLString,
@@ -18,7 +18,7 @@ var books = [
 var authors = [
   { name: "Patrick Rothfuss", age: 44, id: "1" },
   { name: "Brandon Sanderson", age: 42, id: "2" },
-  { name: "Terry Pratchett", age: 66, id: "3" }
+  { name: "Terry Pratche tt", age: 66, id: "3" }
 ];
 const BookType = new GraphQLObjectType({
   name: "Book",
@@ -31,7 +31,7 @@ const BookType = new GraphQLObjectType({
       resolve(parent, args) {
         console.log(parent);
         //go to the parent elemetn for  getting the IDs
-        return _.find(authors, { id: parent.id });
+        // return _.find(authors, { id: parent.id });
       }
     }
   })
@@ -45,7 +45,7 @@ const AuthorType = new GraphQLObjectType({
     books: {
       type: new GraphQLList(BookType),
       resolve(parent, args) {
-        return _.filter(books, { aid: parent.id });
+        // return _.filter(books, { aid: parent.id });
       }
     }
   })
@@ -61,31 +61,52 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
         // code to get data from db / other source
-        return _.find(books, { id: args.id });
+        // return _.find(books, { id: args.id });
       }
     },
     author: {
       type: AuthorType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        return _.find(authors, { id: args.id });
+        // return _.find(authors, { id: args.id });
       }
     },
     books: {
       type: new GraphQLList(BookType),
       resolve(parent, args) {
-        return books;
+        // return books;
       }
     },
     authors: {
       type: new GraphQLList(AuthorType),
       resolve(parent, args) {
-        return authors;
+        // return authors;
+      }
+    }
+  }
+});
+
+const Mutation = new GraphQLObjectType({
+  name: "Mutation",
+  fields: {
+    addAuthor: {
+      type: AuthorType,
+      args: {
+        name: { type: GraphQLString },
+        age: { type: GraphQLInt }
+      },
+      resolve(parent, args) {
+        let author = new Author({
+          name: args.name,
+          age: args.age
+        });
+        return author.save();
       }
     }
   }
 });
 
 module.exports = new GraphQLSchema({
-  query: RootQuery
+  query: RootQuery,
+  mutation: Mutation
 });
